@@ -7,9 +7,12 @@ import (
 )
 
 func TestCutter_Crop(t *testing.T) {
-	img := getGopherImage()
+	img := getImage()
 
-	c := Cutter{512, 400, 0, 0}
+	c := Cutter{
+		Width:  512,
+		Height: 400,
+	}
 	r, err := c.Crop(img)
 	if err != nil {
 		t.Fatal(err)
@@ -29,13 +32,14 @@ func TestCutter_Crop(t *testing.T) {
 }
 
 func TestCutter_CenteredCrop(t *testing.T) {
-	img := getGopherImage()
+	img := getImage()
 
 	c := Cutter{
 		Width:  512,
 		Height: 400,
+		Mode:   Centered,
 	}
-	r, err := c.CropCenter(img)
+	r, err := c.Crop(img)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -51,6 +55,9 @@ func TestCutter_CenteredCrop(t *testing.T) {
 	if r.Bounds().Min.Y != 518 {
 		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
 	}
+}
+func getImage() image.Image {
+	return image.NewGray(image.Rect(0, 0, 1600, 1437))
 }
 
 func getGopherImage() image.Image {
