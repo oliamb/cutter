@@ -1,37 +1,56 @@
 package cutter
 
 import (
-	"fmt"
 	"image"
 	"os"
-	_ "testing"
+	"testing"
 )
 
-func ExampleCutter_Crop() {
+func TestCutter_Crop(t *testing.T) {
 	img := getGopherImage()
 
-	c := Cutter{512, 512, 0, 0}
+	c := Cutter{512, 400, 0, 0}
 	r, err := c.Crop(img)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
-	fmt.Println(r.Bounds())
-	// Output: (0,0)-(512,512)
+	if r.Bounds().Dx() != 512 {
+		t.Error("Bad width should be 512 but is", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 400 {
+		t.Error("Bad width should be 400 but is", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 0 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 0 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
 }
 
-func ExampleCutter_CenteredCrop() {
+func TestCutter_CenteredCrop(t *testing.T) {
 	img := getGopherImage()
 
 	c := Cutter{
 		Width:  512,
-		Height: 512,
+		Height: 400,
 	}
 	r, err := c.CropCenter(img)
 	if err != nil {
-		panic(err)
+		t.Fatal(err)
 	}
-	fmt.Println(r.Bounds())
-	// Output: (544,462)-(1056,974)
+	if r.Bounds().Dx() != 512 {
+		t.Error("Bad width should be 512 but is", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 400 {
+		t.Error("Bad width should be 512 but is", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 544 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 518 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
 }
 
 func getGopherImage() image.Image {
