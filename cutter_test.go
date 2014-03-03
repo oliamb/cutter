@@ -31,7 +31,7 @@ func TestCutter_Crop(t *testing.T) {
 	}
 }
 
-func TestCutter_CenteredCrop(t *testing.T) {
+func TestCutter_Crop_Centered(t *testing.T) {
 	img := getImage()
 
 	c := Cutter{
@@ -56,6 +56,33 @@ func TestCutter_CenteredCrop(t *testing.T) {
 		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
 	}
 }
+
+func TestCutter_Crop_TooBigArea(t *testing.T) {
+	img := getImage()
+
+	c := Cutter{
+		Width:  2000,
+		Height: 2000,
+		Anchor: image.Point{100, 100},
+	}
+	r, err := c.Crop(img)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Bounds().Dx() != 1500 {
+		t.Error("Bad width should be 1500 but is", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 1337 {
+		t.Error("Bad width should be 1337 but is", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 100 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 100 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+}
+
 func getImage() image.Image {
 	return image.NewGray(image.Rect(0, 0, 1600, 1437))
 }
