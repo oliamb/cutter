@@ -1,7 +1,17 @@
-go-crop
-=======
+Cutter
+======
 
-crop.Crop operation on image.Image
+A Go library to crop images.
+
+Currently in development.
+
+Available in Issues to discuss the API and functionality.
+
+Contributing
+============
+
+Fork it, and make a pull request. If you plan to modify the API, let's disscuss it first.
+
 
 Credits
 =======
