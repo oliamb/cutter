@@ -17,7 +17,7 @@ Realize a cut from top left corner:
 
 ```go
 c := Cutter{
-  Width: 250,
+  Width:  250,
   Height: 500,
 }
 img, err := c.Crop(baseImage)
@@ -27,9 +27,10 @@ Specify the top left position:
 
 ```go
 c := Cutter{
-  Width: 250,
+  Width:  250,
   Height: 500,
   Anchor: image.Point{100, 100},
+  Mode:   TopLeft, // optional, default value
 }
 img, err := c.Crop(baseImage)
 ```
@@ -50,7 +51,7 @@ c := Cutter{
   Width: 4,
   Height: 3,
   Mode: Centered,
-  Options: Ratio,
+  Options: Ratio, // consider Width/Height as a ratio rather than absolute value
 }
 img, err := c.Crop(baseImage)
 ```
@@ -58,7 +59,7 @@ img, err := c.Crop(baseImage)
 Contributing
 ============
 
-Fork it, and make a pull request. If you plan to modify the API, let's disscuss it first.
+Fork it, code and make a pull request. If you plan to modify the API, let's disscuss it first.
 
 License
 =======
