@@ -110,6 +110,35 @@ func TestCutter_Crop_TooBigAreaFromCenter(t *testing.T) {
 	}
 }
 
+func TestCutter_Crop_OptionRatio(t *testing.T) {
+	img := getImage()
+
+	c := Cutter{
+		Width:   4,
+		Height:  3,
+		Anchor:  image.Point{},
+		Mode:    TopLeft,
+		Options: Ratio,
+	}
+
+	r, err := c.Crop(img)
+	if err != nil {
+		t.Error(err)
+	}
+	if r.Bounds().Min.X != 0 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 0 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+	if r.Bounds().Dx() != 1600 {
+		t.Error("Bad Width", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 1200 {
+		t.Error("Bad Height", r.Bounds().Dy(), r.Bounds())
+	}
+}
+
 func getImage() image.Image {
 	return image.NewGray(image.Rect(0, 0, 1600, 1437))
 }
