@@ -47,34 +47,36 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 	return result, nil
 }
 
-func (c Cutter) maxBounds(bounds image.Rectangle) image.Rectangle {
+func (c Cutter) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 	if c.Mode == Centered {
 		w := min(c.Anchor.X-bounds.Min.X, bounds.Max.X-c.Anchor.X)
 		h := min(c.Anchor.Y-bounds.Min.Y, bounds.Max.Y-c.Anchor.Y)
-		return image.Rect(c.Anchor.X-w, c.Anchor.Y-h, c.Anchor.X+w, c.Anchor.Y+h)
+		r = image.Rect(c.Anchor.X-w, c.Anchor.Y-h, c.Anchor.X+w, c.Anchor.Y+h)
 	} else {
-		return image.Rect(c.Anchor.X, c.Anchor.Y, bounds.Max.X, bounds.Max.Y)
+		r = image.Rect(c.Anchor.X, c.Anchor.Y, bounds.Max.X, bounds.Max.Y)
 	}
+	return
 }
 
 // computeSize retrieve the effective size of the cropped image.
 // It is defined by Height, Width, and Ratio option.
-func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) image.Point {
+func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) (p image.Point) {
 	if c.Options&Ratio == Ratio {
 		// Ratio option is on, so we take the biggest size available that fit the given ratio.
 		if float64(ratio.X)/float64(bounds.Dx()) > float64(ratio.Y)/float64(bounds.Dy()) {
-			return image.Point{bounds.Dx(), (bounds.Dx() / ratio.X) * ratio.Y}
+			p = image.Point{bounds.Dx(), (bounds.Dx() / ratio.X) * ratio.Y}
 		} else {
-			return image.Point{(bounds.Dy() / ratio.Y) * ratio.X, bounds.Dy()}
+			p = image.Point{(bounds.Dy() / ratio.Y) * ratio.X, bounds.Dy()}
 		}
 	} else {
-		return image.Point{ratio.X, ratio.Y}
+		p = image.Point{ratio.X, ratio.Y}
 	}
+	return
 }
 
 // computedCropArea retrieve the theorical crop area.
 // It is defined by Height, Width, Mode and
-func (c Cutter) computedCropArea(img image.Image, size image.Point) image.Rectangle {
+func (c Cutter) computedCropArea(img image.Image, size image.Point) (r image.Rectangle) {
 	min := img.Bounds().Min
 	switch c.Mode {
 	case Centered:
@@ -90,17 +92,19 @@ func (c Cutter) computedCropArea(img image.Image, size image.Point) image.Rectan
 				Y: min.Y + c.Anchor.Y,
 			}
 		}
-		return image.Rect(rMin.X-size.X/2, rMin.Y-size.Y/2, rMin.X+size.X/2, rMin.Y+size.Y/2)
+		r = image.Rect(rMin.X-size.X/2, rMin.Y-size.Y/2, rMin.X+size.X/2, rMin.Y+size.Y/2)
 	default: // TopLeft
 		rMin := image.Point{min.X + c.Anchor.X, min.Y + c.Anchor.Y}
-		return image.Rect(rMin.X, rMin.Y, rMin.X+size.X, rMin.Y+size.Y)
+		r = image.Rect(rMin.X, rMin.Y, rMin.X+size.X, rMin.Y+size.Y)
 	}
+	return
 }
 
-func min(a, b int) int {
+func min(a, b int) (r int) {
 	if a < b {
-		return a
+		r = a
 	} else {
-		return b
+		r = b
 	}
+	return
 }
