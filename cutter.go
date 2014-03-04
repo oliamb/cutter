@@ -4,23 +4,28 @@ cutter contains the Crop function, used to retrieve a cropped version of the inp
 package cutter
 
 import (
+	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
 )
 
-// An enumeration of the position an anchor can represent.
+// AnchorMode is an enumeration of the position an anchor can represent.
 type AnchorMode int
 
 const (
-	TopLeft  AnchorMode = iota
-	Centered            = iota
+	// TopLeft defines the Anchor Point as the top left of the cropped picture.
+	TopLeft AnchorMode = iota
+	// Centered defines the Anchor Point as the center of the cropped picture.
+	Centered = iota
 )
 
+// List of Option
 type Option int
 
 const (
-	Ratio = 1 << iota // Use width and height as a ratio and keep as most of the image as possible
+	// Use Width and Height as a ratio and keep as most of the image as possible
+	Ratio = 1 << iota
 )
 
 // CropParam struct is used to defined
@@ -35,9 +40,13 @@ type Cutter struct {
 // Retrieve an image representation that is a cropped view from the original image
 func (c Cutter) Crop(img image.Image) (image.Image, error) {
 	maxBounds := c.maxBounds(img.Bounds())
+	fmt.Println("maxBounds", maxBounds)
 	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
-	cr := c.computedCropArea(img, size)
+	fmt.Println("size", size)
+	cr := c.computedCropArea(img.Bounds(), size)
+	fmt.Println("cr", cr)
 	cr = img.Bounds().Intersect(cr)
+	fmt.Println("cr2", cr)
 	result := image.NewRGBA(cr)
 	for x, dx := cr.Min.X, cr.Max.X; x < dx; x += 1 {
 		for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y += 1 {
@@ -49,9 +58,11 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 
 func (c Cutter) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 	if c.Mode == Centered {
-		w := min(c.Anchor.X-bounds.Min.X, bounds.Max.X-c.Anchor.X)
-		h := min(c.Anchor.Y-bounds.Min.Y, bounds.Max.Y-c.Anchor.Y)
-		r = image.Rect(c.Anchor.X-w, c.Anchor.Y-h, c.Anchor.X+w, c.Anchor.Y+h)
+		fmt.Println(c.Anchor.X-bounds.Min.X, bounds.Max.X-c.Anchor.X)
+		anchor := c.centeredMin(bounds)
+		w := min(anchor.X-bounds.Min.X, bounds.Max.X-anchor.X)
+		h := min(anchor.Y-bounds.Min.Y, bounds.Max.Y-anchor.Y)
+		r = image.Rect(anchor.X-w, anchor.Y-h, anchor.X+w, anchor.Y+h)
 	} else {
 		r = image.Rect(c.Anchor.X, c.Anchor.Y, bounds.Max.X, bounds.Max.Y)
 	}
@@ -76,26 +87,31 @@ func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) (p image.
 
 // computedCropArea retrieve the theorical crop area.
 // It is defined by Height, Width, Mode and
-func (c Cutter) computedCropArea(img image.Image, size image.Point) (r image.Rectangle) {
-	min := img.Bounds().Min
+func (c Cutter) computedCropArea(bounds image.Rectangle, size image.Point) (r image.Rectangle) {
+	min := bounds.Min
 	switch c.Mode {
 	case Centered:
-		var rMin image.Point
-		if c.Anchor.X == 0 && c.Anchor.Y == 0 {
-			rMin = image.Point{
-				X: min.X + img.Bounds().Dx()/2,
-				Y: min.Y + img.Bounds().Dy()/2,
-			}
-		} else {
-			rMin = image.Point{
-				X: min.X + c.Anchor.X,
-				Y: min.Y + c.Anchor.Y,
-			}
-		}
+		rMin := c.centeredMin(bounds)
 		r = image.Rect(rMin.X-size.X/2, rMin.Y-size.Y/2, rMin.X+size.X/2, rMin.Y+size.Y/2)
 	default: // TopLeft
 		rMin := image.Point{min.X + c.Anchor.X, min.Y + c.Anchor.Y}
 		r = image.Rect(rMin.X, rMin.Y, rMin.X+size.X, rMin.Y+size.Y)
+	}
+	return
+}
+
+func (c *Cutter) centeredMin(bounds image.Rectangle) (rMin image.Point) {
+	min := bounds.Min
+	if c.Anchor.X == 0 && c.Anchor.Y == 0 {
+		rMin = image.Point{
+			X: min.X + bounds.Dx()/2,
+			Y: min.Y + bounds.Dy()/2,
+		}
+	} else {
+		rMin = image.Point{
+			X: min.X + c.Anchor.X,
+			Y: min.Y + c.Anchor.Y,
+		}
 	}
 	return
 }

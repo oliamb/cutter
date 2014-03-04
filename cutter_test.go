@@ -31,6 +31,33 @@ func TestCutter_Crop(t *testing.T) {
 	}
 }
 
+func TestCutterCrop_Centered_Ratio_WithoutAnchorPosition(t *testing.T) {
+	// (0,0)-(64,64) 32 64 (32,32)-(32,32)
+	img := image.NewGray(image.Rect(0, 0, 64, 64))
+	c := Cutter{
+		Width:   32,
+		Height:  64,
+		Mode:    Centered,
+		Options: Ratio,
+	}
+	r, err := c.Crop(img)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Bounds().Dx() != 32 {
+		t.Error("Bad Width", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 64 {
+		t.Error("Bad Height", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 16 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 0 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+}
+
 func TestCutter_Crop_Centered(t *testing.T) {
 	img := getImage()
 
