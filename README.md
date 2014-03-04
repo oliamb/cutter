@@ -1,7 +1,7 @@
 Cutter
 ======
 
-A Go library to crop images, works great in combination with
+A Go library to crop images, works great in combination with [github.com/nfnt/resize](https://github.com/nfnt/resize)
 
 Usage
 =====
