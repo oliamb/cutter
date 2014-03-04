@@ -4,7 +4,6 @@ cutter contains the Crop function, used to retrieve a cropped version of the inp
 package cutter
 
 import (
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -40,13 +39,9 @@ type Cutter struct {
 // Retrieve an image representation that is a cropped view from the original image
 func (c Cutter) Crop(img image.Image) (image.Image, error) {
 	maxBounds := c.maxBounds(img.Bounds())
-	fmt.Println("maxBounds", maxBounds)
 	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
-	fmt.Println("size", size)
 	cr := c.computedCropArea(img.Bounds(), size)
-	fmt.Println("cr", cr)
 	cr = img.Bounds().Intersect(cr)
-	fmt.Println("cr2", cr)
 	result := image.NewRGBA(cr)
 	for x, dx := cr.Min.X, cr.Max.X; x < dx; x += 1 {
 		for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y += 1 {
@@ -58,7 +53,6 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 
 func (c Cutter) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 	if c.Mode == Centered {
-		fmt.Println(c.Anchor.X-bounds.Min.X, bounds.Max.X-c.Anchor.X)
 		anchor := c.centeredMin(bounds)
 		w := min(anchor.X-bounds.Min.X, bounds.Max.X-anchor.X)
 		h := min(anchor.Y-bounds.Min.Y, bounds.Max.Y-anchor.Y)
