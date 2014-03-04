@@ -4,7 +4,6 @@ cutter contains the Crop function, used to retrieve a cropped version of the inp
 package cutter
 
 import (
-	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -35,7 +34,8 @@ type Cutter struct {
 
 // Retrieve an image representation that is a cropped view from the original image
 func (c Cutter) Crop(img image.Image) (image.Image, error) {
-	size := c.computeSize(img)
+	maxBounds := c.maxBounds(img.Bounds())
+	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
 	cr := c.computedCropArea(img, size)
 	cr = img.Bounds().Intersect(cr)
 	result := image.NewRGBA(cr)
@@ -47,18 +47,28 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 	return result, nil
 }
 
+func (c Cutter) maxBounds(bounds image.Rectangle) image.Rectangle {
+	if c.Mode == Centered {
+		w := min(c.Anchor.X-bounds.Min.X, bounds.Max.X-c.Anchor.X)
+		h := min(c.Anchor.Y-bounds.Min.Y, bounds.Max.Y-c.Anchor.Y)
+		return image.Rect(c.Anchor.X-w, c.Anchor.Y-h, c.Anchor.X+w, c.Anchor.Y+h)
+	} else {
+		return image.Rect(c.Anchor.X, c.Anchor.Y, bounds.Max.X, bounds.Max.Y)
+	}
+}
+
 // computeSize retrieve the effective size of the cropped image.
 // It is defined by Height, Width, and Ratio option.
-func (c Cutter) computeSize(img image.Image) image.Point {
+func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) image.Point {
 	if c.Options&Ratio == Ratio {
 		// Ratio option is on, so we take the biggest size available that fit the given ratio.
-		if float64(c.Width)/float64(img.Bounds().Dx()) > float64(c.Height)/float64(img.Bounds().Dy()) {
-			return image.Point{img.Bounds().Dx(), (img.Bounds().Dx() / c.Width) * c.Height}
+		if float64(ratio.X)/float64(bounds.Dx()) > float64(ratio.Y)/float64(bounds.Dy()) {
+			return image.Point{bounds.Dx(), (bounds.Dx() / ratio.X) * ratio.Y}
 		} else {
-			return image.Point{(img.Bounds().Dy() / c.Height) * c.Width, img.Bounds().Dy()}
+			return image.Point{(bounds.Dy() / ratio.Y) * ratio.X, bounds.Dy()}
 		}
 	} else {
-		return image.Point{c.Width, c.Height}
+		return image.Point{ratio.X, ratio.Y}
 	}
 }
 
@@ -84,5 +94,13 @@ func (c Cutter) computedCropArea(img image.Image, size image.Point) image.Rectan
 	default: // TopLeft
 		rMin := image.Point{min.X + c.Anchor.X, min.Y + c.Anchor.Y}
 		return image.Rect(rMin.X, rMin.Y, rMin.X+size.X, rMin.Y+size.Y)
+	}
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	} else {
+		return b
 	}
 }

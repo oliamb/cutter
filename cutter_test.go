@@ -139,7 +139,7 @@ func TestCutter_Crop_OptionRatio(t *testing.T) {
 	}
 }
 
-func TestCutter_Crop_OptionRation_Inverted(t *testing.T) {
+func TestCutter_Crop_OptionRatio_Inverted(t *testing.T) {
 	img := getImage()
 
 	c := Cutter{
@@ -164,6 +164,34 @@ func TestCutter_Crop_OptionRation_Inverted(t *testing.T) {
 		t.Error("Bad Height", r.Bounds().Dy(), r.Bounds())
 	}
 	if r.Bounds().Dx() != 1077 {
+		t.Error("Bad Width", r.Bounds().Dx())
+	}
+}
+
+func TestCutter_Crop_OptionRatio_DecentredAnchor_Overflow(t *testing.T) {
+	img := getImage()
+	c := Cutter{
+		Width:   3,
+		Height:  4,
+		Anchor:  image.Point{100, 80},
+		Mode:    Centered,
+		Options: Ratio,
+	}
+
+	r, err := c.Crop(img)
+	if err != nil {
+		t.Error(err)
+	}
+	if r.Bounds().Min.X != 40 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 0 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+	if r.Bounds().Dy() != 160 {
+		t.Error("Bad Height", r.Bounds().Dy(), r.Bounds())
+	}
+	if r.Bounds().Dx() != 120 {
 		t.Error("Bad Width", r.Bounds().Dx())
 	}
 }
