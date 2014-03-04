@@ -4,6 +4,7 @@ cutter contains the Crop function, used to retrieve a cropped version of the inp
 package cutter
 
 import (
+	"fmt"
 	"image"
 	_ "image/jpeg"
 	_ "image/png"
@@ -34,12 +35,7 @@ type Cutter struct {
 
 // Retrieve an image representation that is a cropped view from the original image
 func (c Cutter) Crop(img image.Image) (image.Image, error) {
-	var size image.Point
-	if c.Options&Ratio == Ratio {
-		size = image.Point{img.Bounds().Dx(), (img.Bounds().Dx() / c.Width) * c.Height}
-	} else {
-		size = image.Point{c.Width, c.Height}
-	}
+	size := c.computeSize(img)
 	cr := c.computedCropArea(img, size)
 	cr = img.Bounds().Intersect(cr)
 	result := image.NewRGBA(cr)
@@ -49,6 +45,21 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 		}
 	}
 	return result, nil
+}
+
+// computeSize retrieve the effective size of the cropped image.
+// It is defined by Height, Width, and Ratio option.
+func (c Cutter) computeSize(img image.Image) image.Point {
+	if c.Options&Ratio == Ratio {
+		// Ratio option is on, so we take the biggest size available that fit the given ratio.
+		if float64(c.Width)/float64(img.Bounds().Dx()) > float64(c.Height)/float64(img.Bounds().Dy()) {
+			return image.Point{img.Bounds().Dx(), (img.Bounds().Dx() / c.Width) * c.Height}
+		} else {
+			return image.Point{(img.Bounds().Dy() / c.Height) * c.Width, img.Bounds().Dy()}
+		}
+	} else {
+		return image.Point{c.Width, c.Height}
+	}
 }
 
 // computedCropArea retrieve the theorical crop area.
