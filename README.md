@@ -85,4 +85,4 @@ Credits
 Test Picture: Gopher picture from Heidi Schuyt, http://www.flickr.com/photos/hschuyt/7674222278/,
 © copyright Creative Commons(http://creativecommons.org/licenses/by-nc-sa/2.0/)
 
-Thanks to Urturn for the time allocated to develop the library.
+Thanks to Urturn(http://www.urturn.com) for the time allocated to develop the library.
