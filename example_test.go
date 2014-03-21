@@ -20,7 +20,7 @@ func ExampleCrop() {
 	}
 
 	cImg, err := Crop(img, Config{
-		Height:  500,                 // height in pixel or Y ratio(see Option Ratio)
+		Height:  500,                 // height in pixel or Y ratio(see Ratio Option below)
 		Width:   500,                 // width in pixel or X ratio
 		Mode:    TopLeft,             // Accepted Mode: TopLeft, Centered
 		Anchor:  image.Point{10, 10}, // Position of the top left point
