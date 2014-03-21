@@ -46,7 +46,7 @@ import (
 	"image"
 )
 
-// Config	is used to defined
+// Config is used to defined
 // the way the crop should be realized.
 type Config struct {
 	Width, Height int
