@@ -1,5 +1,5 @@
 /*
-cutter contains the Crop function, used to retrieve a cropped version of the input image.
+Package cutter provides a function to crop image.
 */
 package cutter
 
@@ -9,13 +9,24 @@ import (
 	_ "image/png"
 )
 
+// CropParam struct is used to defined
+// the way the crop should be realized.
+type Config struct {
+	Width, Height int
+	Anchor        image.Point // The Anchor Point in the source image
+	Mode          AnchorMode  // Which point in the resulting image the Anchor Point is referring to
+	Options       Option
+}
+
 // AnchorMode is an enumeration of the position an anchor can represent.
 type AnchorMode int
 
 const (
-	// TopLeft defines the Anchor Point as the top left of the cropped picture.
+	// TopLeft defines the Anchor Point
+	// as the top left of the cropped picture.
 	TopLeft AnchorMode = iota
-	// Centered defines the Anchor Point as the center of the cropped picture.
+	// Centered defines the Anchor Point
+	// as the center of the cropped picture.
 	Centered = iota
 )
 
@@ -23,21 +34,14 @@ const (
 type Option int
 
 const (
-	// Use Width and Height as a ratio and keep as most of the image as possible
-	Ratio = 1 << iota
+	// Use Width and Height as a ratio and keep
+	// as most of the image as possible
+	Ratio Option = 1 << iota
 )
 
-// CropParam struct is used to defined
-// the way the crop should be realized.
-type Cutter struct {
-	Width, Height int
-	Anchor        image.Point // The Anchor Point in the source image
-	Mode          AnchorMode  // Which point in the resulting image the Anchor Point is referring to
-	Options       Option
-}
-
-// Retrieve an image representation that is a cropped view from the original image
-func (c Cutter) Crop(img image.Image) (image.Image, error) {
+// Retrieve an image representation that is a
+// cropped view from the original image
+func Crop(img image.Image, c Config) (image.Image, error) {
 	maxBounds := c.maxBounds(img.Bounds())
 	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
 	cr := c.computedCropArea(img.Bounds(), size)
@@ -51,7 +55,7 @@ func (c Cutter) Crop(img image.Image) (image.Image, error) {
 	return result, nil
 }
 
-func (c Cutter) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
+func (c Config) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 	if c.Mode == Centered {
 		anchor := c.centeredMin(bounds)
 		w := min(anchor.X-bounds.Min.X, bounds.Max.X-anchor.X)
@@ -65,7 +69,7 @@ func (c Cutter) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 
 // computeSize retrieve the effective size of the cropped image.
 // It is defined by Height, Width, and Ratio option.
-func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) (p image.Point) {
+func (c Config) computeSize(bounds image.Rectangle, ratio image.Point) (p image.Point) {
 	if c.Options&Ratio == Ratio {
 		// Ratio option is on, so we take the biggest size available that fit the given ratio.
 		if float64(ratio.X)/float64(bounds.Dx()) > float64(ratio.Y)/float64(bounds.Dy()) {
@@ -81,7 +85,7 @@ func (c Cutter) computeSize(bounds image.Rectangle, ratio image.Point) (p image.
 
 // computedCropArea retrieve the theorical crop area.
 // It is defined by Height, Width, Mode and
-func (c Cutter) computedCropArea(bounds image.Rectangle, size image.Point) (r image.Rectangle) {
+func (c Config) computedCropArea(bounds image.Rectangle, size image.Point) (r image.Rectangle) {
 	min := bounds.Min
 	switch c.Mode {
 	case Centered:
@@ -94,7 +98,7 @@ func (c Cutter) computedCropArea(bounds image.Rectangle, size image.Point) (r im
 	return
 }
 
-func (c *Cutter) centeredMin(bounds image.Rectangle) (rMin image.Point) {
+func (c *Config) centeredMin(bounds image.Rectangle) (rMin image.Point) {
 	min := bounds.Min
 	if c.Anchor.X == 0 && c.Anchor.Y == 0 {
 		rMin = image.Point{

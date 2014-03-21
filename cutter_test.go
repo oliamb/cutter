@@ -6,14 +6,14 @@ import (
 	"testing"
 )
 
-func TestCutter_Crop(t *testing.T) {
+func TestCrop(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:  512,
 		Height: 400,
 	}
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -31,42 +31,15 @@ func TestCutter_Crop(t *testing.T) {
 	}
 }
 
-func TestCutterCrop_Centered_Ratio_WithoutAnchorPosition(t *testing.T) {
-	// (0,0)-(64,64) 32 64 (32,32)-(32,32)
-	img := image.NewGray(image.Rect(0, 0, 64, 64))
-	c := Cutter{
-		Width:   32,
-		Height:  64,
-		Mode:    Centered,
-		Options: Ratio,
-	}
-	r, err := c.Crop(img)
-	if err != nil {
-		t.Fatal(err)
-	}
-	if r.Bounds().Dx() != 32 {
-		t.Error("Bad Width", r.Bounds().Dx())
-	}
-	if r.Bounds().Dy() != 64 {
-		t.Error("Bad Height", r.Bounds().Dy())
-	}
-	if r.Bounds().Min.X != 16 {
-		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
-	}
-	if r.Bounds().Min.Y != 0 {
-		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
-	}
-}
-
-func TestCutter_Crop_Centered(t *testing.T) {
+func TestCrop_Centered(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:  512,
 		Height: 400,
 		Mode:   Centered,
 	}
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -84,15 +57,42 @@ func TestCutter_Crop_Centered(t *testing.T) {
 	}
 }
 
+func TestCrop_Centered_Ratio_WithoutAnchorPosition(t *testing.T) {
+	// (0,0)-(64,64) 32 64 (32,32)-(32,32)
+	img := image.NewGray(image.Rect(0, 0, 64, 64))
+	c := Config{
+		Width:   32,
+		Height:  64,
+		Mode:    Centered,
+		Options: Ratio,
+	}
+	r, err := Crop(img, c)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Bounds().Dx() != 32 {
+		t.Error("Bad Width", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 64 {
+		t.Error("Bad Height", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 16 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 0 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+}
+
 func TestCutter_Crop_TooBigArea(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:  2000,
 		Height: 2000,
 		Anchor: image.Point{100, 100},
 	}
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -110,16 +110,16 @@ func TestCutter_Crop_TooBigArea(t *testing.T) {
 	}
 }
 
-func TestCutter_Crop_TooBigAreaFromCenter(t *testing.T) {
+func TestCrop_TooBigAreaFromCenter(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:  1000,
 		Height: 2000,
 		Anchor: image.Point{1200, 100},
 		Mode:   Centered,
 	}
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -137,10 +137,10 @@ func TestCutter_Crop_TooBigAreaFromCenter(t *testing.T) {
 	}
 }
 
-func TestCutter_Crop_OptionRatio(t *testing.T) {
+func TestCrop_OptionRatio(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:   4,
 		Height:  3,
 		Anchor:  image.Point{},
@@ -148,7 +148,7 @@ func TestCutter_Crop_OptionRatio(t *testing.T) {
 		Options: Ratio,
 	}
 
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Error(err)
 	}
@@ -169,7 +169,7 @@ func TestCutter_Crop_OptionRatio(t *testing.T) {
 func TestCutter_Crop_OptionRatio_Inverted(t *testing.T) {
 	img := getImage()
 
-	c := Cutter{
+	c := Config{
 		Width:   3,
 		Height:  4,
 		Anchor:  image.Point{},
@@ -177,7 +177,7 @@ func TestCutter_Crop_OptionRatio_Inverted(t *testing.T) {
 		Options: Ratio,
 	}
 
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Error(err)
 	}
@@ -197,7 +197,7 @@ func TestCutter_Crop_OptionRatio_Inverted(t *testing.T) {
 
 func TestCutter_Crop_OptionRatio_DecentredAnchor_Overflow(t *testing.T) {
 	img := getImage()
-	c := Cutter{
+	c := Config{
 		Width:   3,
 		Height:  4,
 		Anchor:  image.Point{100, 80},
@@ -205,7 +205,7 @@ func TestCutter_Crop_OptionRatio_DecentredAnchor_Overflow(t *testing.T) {
 		Options: Ratio,
 	}
 
-	r, err := c.Crop(img)
+	r, err := Crop(img, c)
 	if err != nil {
 		t.Error(err)
 	}
