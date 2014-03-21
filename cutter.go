@@ -44,11 +44,9 @@ package cutter
 
 import (
 	"image"
-	_ "image/jpeg"
-	_ "image/png"
 )
 
-// CropParam struct is used to defined
+// Config	is used to defined
 // the way the crop should be realized.
 type Config struct {
 	Width, Height int
@@ -69,25 +67,28 @@ const (
 	Centered = iota
 )
 
-// List of Option
+// Option flags to modify the way the crop is done.
 type Option int
 
 const (
-	// Use Width and Height as a ratio and keep
-	// as most of the image as possible
+	// Ratio flag is use when Width and Height
+	// must be used to compute a ratio rather
+	// than absolute size in pixels.
 	Ratio Option = 1 << iota
 )
 
-// Retrieve an image representation that is a
-// cropped view from the original image
+// Crop retrieves an image that is a
+// cropped copy of the original img.
+//
+// The crop is made given the informations provided in config.
 func Crop(img image.Image, c Config) (image.Image, error) {
 	maxBounds := c.maxBounds(img.Bounds())
 	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
 	cr := c.computedCropArea(img.Bounds(), size)
 	cr = img.Bounds().Intersect(cr)
 	result := image.NewRGBA(cr)
-	for x, dx := cr.Min.X, cr.Max.X; x < dx; x += 1 {
-		for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y += 1 {
+	for x, dx := cr.Min.X, cr.Max.X; x < dx; x++ {
+		for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y++ {
 			result.Set(x, y, result.ColorModel().Convert(img.At(x, y)))
 		}
 	}

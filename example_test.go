@@ -3,6 +3,7 @@ package cutter
 import (
 	"fmt"
 	"image"
+	_ "image/jpeg"
 	"log"
 	"os"
 	_ "testing"
