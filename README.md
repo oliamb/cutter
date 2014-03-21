@@ -4,7 +4,7 @@ Cutter
 [![Build Status](https://travis-ci.org/oliamb/cutter.png?branch=master)](https://travis-ci.org/oliamb/cutter)
 [![GoDoc](https://godoc.org/github.com/oliamb/cutter?status.png)](https://godoc.org/github.com/oliamb/cutter)
 
-A Go library to crop images, works great in combination with [github.com/nfnt/resize](https://github.com/nfnt/resize)
+A Go library to crop images.
 
 Usage
 =====
@@ -52,6 +52,10 @@ from the anchor position.
       Mode: Centered,
       Options: Ratio,
     })
+
+About resize
+============
+This lib only manage crop and won't resize image, but it works great in combination with [github.com/nfnt/resize](https://github.com/nfnt/resize)
 
 Contributing
 ============
