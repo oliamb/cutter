@@ -78,7 +78,7 @@ If you plan to modify the API, let's disscuss it first.
 
 Licensing
 ---------
-Please see the file called LICENSE.
+MIT License, Please see the file called LICENSE.
 
 Credits
 -------
