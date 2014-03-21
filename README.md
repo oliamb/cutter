@@ -9,54 +9,48 @@ Usage
 =====
 Import package with
 
-```go
-import "github.com/oliamb/cutter"
-```
+    import "github.com/oliamb/cutter"
 
-The cutter package provides a ```Cutter``` which in turn provide a ```Crop``` function that realize the crop operation on the passed image.
+Package cutter provides a function to crop image.
 
-Realize a cut from top left corner:
+By default, the original image will be cropped at the
+given size from the top left corner.
 
-```go
-c := cutter.Config{
-  Width:  250,
-  Height: 500,
-}
-img, err := cutter.Crop(baseImage, c)
-```
+    croppedImg, err := cutter.Crop(img, cutter.Config{
+      Width:  250,
+      Height: 500,
+    })
 
-Specify the top left position:
+It is possible to specify the top left position:
 
-```go
-c := cutter.Config{
-  Width:  250,
-  Height: 500,
-  Anchor: image.Point{100, 100},
-  Mode:   TopLeft, // optional, default value
-}
-img, err := cutter.Crop(baseImage, c)
-```
+    croppedImg, err := cutter.Crop(img, cutter.Config{
+      Width:  250,
+      Height: 500,
+      Anchor: image.Point{100, 100},
+      Mode:   TopLeft, // optional, default value
+    })
 
-Make a centered crop:
-```go
-c := cutter.Config{
-  Width: 250,
-  Height: 500,
-  Mode: Centered,
-}
-img, err := cutter.Crop(baseImage, c)
-```
+The Anchor property can represents the center of the cropped image
+instead of the top left corner:
 
-Use ratio instead of specific width and height:
-```go
-c := cutter.Config{
-  Width: 4,
-  Height: 3,
-  Mode: Centered,
-  Options: Ratio, // consider Width/Height as a ratio rather than absolute value
-}
-img, err := cutter.Crop(baseImage, c)
-```
+
+    croppedImg, err := cutter.Crop(img, cutter.Config{
+      Width: 250,
+      Height: 500,
+      Mode: Centered,
+    })
+
+The default crop use the specified dimension, but it is possible
+to use Width and Heigth as a ratio instead. In this case,
+the resulting image will be as big as possible to fit the asked ratio
+from the anchor position.
+
+    croppedImg, err := cutter.Crop(baseImage, cutter.Config{
+      Width: 4,
+      Height: 3,
+      Mode: Centered,
+      Options: Ratio,
+    })
 
 Contributing
 ============
