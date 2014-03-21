@@ -8,8 +8,8 @@ What is it?
 -----------
 A Go library to crop images.
 
-Cutter was developped to be able
-to crop image resized by github.com/nfnt/resize.
+Cutter was initially developped to be able
+to crop image resized using github.com/nfnt/resize.
 
 Usage
 -----
