@@ -19,14 +19,17 @@ func ExampleCrop() {
 		log.Fatal("Cannot decode image:", err)
 	}
 
-	var c Config
-	c.Height = 500
-	c.Width = 500
+	cImg, err := Crop(img, Config{
+		Height:  500,                 // height in pixel or Y ratio(see Option Ratio)
+		Width:   500,                 // width in pixel or X ratio
+		Mode:    TopLeft,             // Accepted Mode: TopLeft, Centered
+		Anchor:  image.Point{10, 10}, // Position of the top left point
+		Options: 0,                   // Accepted Option: Ratio
+	})
 
-	cImg, err := Crop(img, c)
 	if err != nil {
 		log.Fatal("Cannot crop image:", err)
 	}
 	fmt.Println("cImg dimension:", cImg.Bounds())
-	// Output: cImg dimension: (0,0)-(500,500)
+	// Output: cImg dimension: (10,10)-(510,510)
 }
