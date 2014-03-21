@@ -18,44 +18,44 @@ The cutter package provides a ```Cutter``` which in turn provide a ```Crop``` fu
 Realize a cut from top left corner:
 
 ```go
-c := Cutter{
+c := cutter.Config{
   Width:  250,
   Height: 500,
 }
-img, err := c.Crop(baseImage)
+img, err := cutter.Crop(baseImage, c)
 ```
 
 Specify the top left position:
 
 ```go
-c := Cutter{
+c := cutter.Config{
   Width:  250,
   Height: 500,
   Anchor: image.Point{100, 100},
   Mode:   TopLeft, // optional, default value
 }
-img, err := c.Crop(baseImage)
+img, err := cutter.Crop(baseImage, c)
 ```
 
 Make a centered crop:
 ```go
-c := Cutter{
+c := cutter.Config{
   Width: 250,
   Height: 500,
   Mode: Centered,
 }
-img, err := c.Crop(baseImage)
+img, err := cutter.Crop(baseImage, c)
 ```
 
 Use ratio instead of specific width and height:
 ```go
-c := Cutter{
+c := cutter.Config{
   Width: 4,
   Height: 3,
   Mode: Centered,
   Options: Ratio, // consider Width/Height as a ratio rather than absolute value
 }
-img, err := c.Crop(baseImage)
+img, err := cutter.Crop(baseImage, c)
 ```
 
 Contributing
