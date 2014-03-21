@@ -1,6 +1,7 @@
 package cutter
 
 import (
+	"fmt"
 	"image"
 	"log"
 	"os"
@@ -8,9 +9,6 @@ import (
 )
 
 func ExampleCrop() {
-	log.SetOutput(os.Stdout)
-	log.SetFlags(0)
-
 	f, err := os.Open("fixtures/gopher.jpg")
 	if err != nil {
 		log.Fatal("Cannot open file", err)
@@ -28,6 +26,6 @@ func ExampleCrop() {
 	if err != nil {
 		log.Fatal("Cannot crop image:", err)
 	}
-	log.Println("cImg dimension:", cImg.Bounds())
+	fmt.Println("cImg dimension:", cImg.Bounds())
 	// Output: cImg dimension: (0,0)-(500,500)
 }
