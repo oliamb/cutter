@@ -5,6 +5,13 @@ import (
 	"testing"
 )
 
+/*
+BenchmarkCrop is used to track the Crop with sharing memory.
+
+On my laptop, the required time is lower than 0.00 ns/op.
+With a bigger, size it would probably not increase as
+nothing is copied.
+*/
 func BenchmarkCrop(b *testing.B) {
 	img := getImage()
 
@@ -20,7 +27,7 @@ func BenchmarkCrop(b *testing.B) {
 }
 
 /*
-BenchmarkCrop is used to track the Crop performance.
+BenchmarkCropCopy is used to track the Crop with copy performance.
 
 Below are the actual result on my laptop given each
 optimization suggested by Nigel Tao: https://groups.google.com/forum/#!topic/golang-nuts/qxSpOOp1QOk
