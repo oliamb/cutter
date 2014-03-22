@@ -76,7 +76,18 @@ const (
 	// must be used to compute a ratio rather
 	// than absolute size in pixels.
 	Ratio Option = 1 << iota
+	// Copy flag is used to enforce the function
+	// to retrieve a copy of the selected pixels.
+	// This disable a series of optimization where
+	// a SubImage can be retrieved instead.
+	Copy Option = 1 << iota
 )
+
+// An interface that is
+// image.Image + SubImage method.
+type subImageSupported interface {
+	SubImage(r image.Rectangle) image.Image
+}
 
 // Crop retrieves an image that is a
 // cropped copy of the original img.
@@ -87,6 +98,17 @@ func Crop(img image.Image, c Config) (image.Image, error) {
 	size := c.computeSize(maxBounds, image.Point{c.Width, c.Height})
 	cr := c.computedCropArea(img.Bounds(), size)
 	cr = img.Bounds().Intersect(cr)
+
+	if c.Options&Copy == Copy {
+		return cropWithCopy(img, cr)
+	}
+	if dImg, ok := img.(subImageSupported); ok {
+		return dImg.SubImage(cr), nil
+	}
+	return cropWithCopy(img, cr)
+}
+
+func cropWithCopy(img image.Image, cr image.Rectangle) (image.Image, error) {
 	result := image.NewRGBA(cr)
 	draw.Draw(result, cr, img, cr.Min, draw.Src)
 	return result, nil

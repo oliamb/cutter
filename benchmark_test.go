@@ -5,6 +5,20 @@ import (
 	"testing"
 )
 
+func BenchmarkCrop(b *testing.B) {
+	img := getImage()
+
+	c := Config{
+		Width:  1000,
+		Height: 1000,
+		Mode:   TopLeft,
+		Anchor: image.Point{100, 100},
+	}
+	b.ResetTimer()
+	r, _ := Crop(img, c)
+	r.Bounds()
+}
+
 /*
 BenchmarkCrop is used to track the Crop performance.
 
@@ -17,14 +31,15 @@ optimization suggested by Nigel Tao: https://groups.google.com/forum/#!topic/gol
 4. after replacing the two 'pixel' loops by a call to draw.Draw
    to obtains the cropped image: 0.04 ns/op
 */
-func BenchmarkCrop(b *testing.B) {
+func BenchmarkCropCopy(b *testing.B) {
 	img := getImage()
 
 	c := Config{
-		Width:  1000,
-		Height: 1000,
-		Mode:   TopLeft,
-		Anchor: image.Point{100, 100},
+		Width:   1000,
+		Height:  1000,
+		Mode:    TopLeft,
+		Anchor:  image.Point{100, 100},
+		Options: Copy,
 	}
 	b.ResetTimer()
 	r, _ := Crop(img, c)
