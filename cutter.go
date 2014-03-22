@@ -87,8 +87,8 @@ func Crop(img image.Image, c Config) (image.Image, error) {
 	cr := c.computedCropArea(img.Bounds(), size)
 	cr = img.Bounds().Intersect(cr)
 	result := image.NewRGBA(cr)
-	for x, dx := cr.Min.X, cr.Max.X; x < dx; x++ {
-		for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y++ {
+	for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y++ {
+		for x, dx := cr.Min.X, cr.Max.X; x < dx; x++ {
 			result.Set(x, y, result.ColorModel().Convert(img.At(x, y)))
 		}
 	}

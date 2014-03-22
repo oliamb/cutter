@@ -6,8 +6,9 @@ import (
 )
 
 /*
-Initial time on my MacBook Air: 23 ns/op
-By inverting x and y in copy loop: 0.09 ns/op
+Tracking performance tracking:
+- initial time on my Laptop: 23 ns/op
+- by inverting x and y in copy loop: 0.09 ns/op
 */
 func BenchmarkCrop(b *testing.B) {
 	img := getImage()
