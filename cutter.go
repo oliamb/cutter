@@ -44,6 +44,7 @@ package cutter
 
 import (
 	"image"
+	"image/draw"
 )
 
 // Config is used to defined
@@ -87,11 +88,7 @@ func Crop(img image.Image, c Config) (image.Image, error) {
 	cr := c.computedCropArea(img.Bounds(), size)
 	cr = img.Bounds().Intersect(cr)
 	result := image.NewRGBA(cr)
-	for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y++ {
-		for x, dx := cr.Min.X, cr.Max.X; x < dx; x++ {
-			result.Set(x, y, img.At(x, y))
-		}
-	}
+	draw.Draw(result, cr, img, cr.Min, draw.Src)
 	return result, nil
 }
 
