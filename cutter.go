@@ -78,9 +78,9 @@ const (
 	Ratio Option = 1 << iota
 	// Copy flag is used to enforce the function
 	// to retrieve a copy of the selected pixels.
-	// This disable a series of optimization where
-	// a SubImage can be retrieved instead.
-	Copy Option = 1 << iota
+	// This disable the use of SubImage method
+	// to compute the result.
+	Copy = 1 << iota
 )
 
 // An interface that is
