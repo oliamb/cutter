@@ -9,6 +9,16 @@ given size from the top left corner.
 		  Height: 500,
 		})
 
+Most of the time, the cropped image will share some memory
+with the original, so it should be used read only. You must
+ask explicitely for a copy if nedded.
+
+    croppedImg, err := cutter.Crop(img, cutter.Config{
+      Width:  250,
+      Height: 500,
+      Options: Copy,
+    })
+
 It is possible to specify the top left position:
 
 		croppedImg, err := cutter.Crop(img, cutter.Config{
