@@ -89,7 +89,7 @@ func Crop(img image.Image, c Config) (image.Image, error) {
 	result := image.NewRGBA(cr)
 	for y, dy := cr.Min.Y, cr.Max.Y; y < dy; y++ {
 		for x, dx := cr.Min.X, cr.Max.X; x < dx; x++ {
-			result.Set(x, y, result.ColorModel().Convert(img.At(x, y)))
+			result.Set(x, y, img.At(x, y))
 		}
 	}
 	return result, nil
