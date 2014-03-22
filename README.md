@@ -1,12 +1,10 @@
 Cutter
 ======
 
+A Go library to crop images.
+
 [![Build Status](https://travis-ci.org/oliamb/cutter.png?branch=master)](https://travis-ci.org/oliamb/cutter)
 [![GoDoc](https://godoc.org/github.com/oliamb/cutter?status.png)](https://godoc.org/github.com/oliamb/cutter)
-
-What is it?
------------
-A Go library to crop images.
 
 Cutter was initially developped to be able
 to crop image resized using github.com/nfnt/resize.
