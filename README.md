@@ -35,7 +35,7 @@ ask explicitely for a copy if nedded.
     croppedImg, err := cutter.Crop(img, cutter.Config{
       Width:  250,
       Height: 500,
-      Options: Copy,
+      Options: cutter.Copy,
     })
 
 It is possible to specify the top left position:
@@ -44,7 +44,7 @@ It is possible to specify the top left position:
       Width:  250,
       Height: 500,
       Anchor: image.Point{100, 100},
-      Mode:   TopLeft, // optional, default value
+      Mode:   cutter.TopLeft, // optional, default value
     })
 
 The Anchor property can represents the center of the cropped image
@@ -54,7 +54,7 @@ instead of the top left corner:
     croppedImg, err := cutter.Crop(img, cutter.Config{
       Width: 250,
       Height: 500,
-      Mode: Centered,
+      Mode: cutter.Centered,
     })
 
 The default crop use the specified dimension, but it is possible
@@ -65,8 +65,8 @@ from the anchor position.
     croppedImg, err := cutter.Crop(baseImage, cutter.Config{
       Width: 4,
       Height: 3,
-      Mode: Centered,
-      Options: Ratio&Copy, // Copy is useless here
+      Mode: cutter.Centered,
+      Options: cutter.Ratio&cutter.Copy, // Copy is useless here
     })
 
 About resize
