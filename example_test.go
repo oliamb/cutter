@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"image"
 	_ "image/jpeg"
+	_ "image/png"
 	"log"
 	"os"
 	_ "testing"
@@ -32,4 +33,30 @@ func ExampleCrop() {
 	}
 	fmt.Println("cImg dimension:", cImg.Bounds())
 	// Output: cImg dimension: (10,10)-(510,510)
+}
+
+func ExampleCropPng() {
+	f, err := os.Open("fixtures/dark.png")
+	if err != nil {
+		log.Fatal("Cannot open file", err)
+	}
+	img, _, err := image.Decode(f)
+	if err != nil {
+		log.Fatal("Cannot decode image:", err)
+	}
+
+	cImg, err := Crop(img, Config{
+		Height:  500,                 // height in pixel or Y ratio(see Ratio Option below)
+		Width:   500,                 // width in pixel or X ratio
+		Mode:    TopLeft,             // Accepted Mode: TopLeft, Centered
+		Anchor:  image.Point{10, 10}, // Position of the top left point
+		Options: 0,                   // Accepted Option: Ratio
+	})
+
+	if err != nil {
+		log.Fatal("Cannot crop image:", err)
+	}
+	// The image is smaller than the Crop call	
+	fmt.Println("cImg dimension:", cImg.Bounds())
+	// Output: cImg dimension: (10,10)-(312,288)
 }

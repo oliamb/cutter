@@ -2,7 +2,6 @@ package cutter
 
 import (
 	"image"
-	"os"
 	"testing"
 )
 
@@ -280,17 +279,4 @@ func getImage() image.Image {
 
 func getOddImage() image.Image {
 	return image.NewGray(image.Rect(0, 0, 999, 999))
-}
-
-func getGopherImage() image.Image {
-	fi, err := os.Open("fixtures/gopher.jpg")
-	if err != nil {
-		panic(err)
-	}
-	defer fi.Close()
-	img, _, err := image.Decode(fi)
-	if err != nil {
-		panic(err)
-	}
-	return img
 }
