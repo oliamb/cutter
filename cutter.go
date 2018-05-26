@@ -159,7 +159,7 @@ func (c Config) computedCropArea(bounds image.Rectangle, size image.Point) (r im
 	switch c.Mode {
 	case Centered:
 		rMin := c.centeredMin(bounds)
-		r = image.Rect(rMin.X-size.X/2, rMin.Y-size.Y/2, rMin.X+size.X/2, rMin.Y+size.Y/2)
+		r = image.Rect(rMin.X-size.X/2, rMin.Y-size.Y/2, rMin.X-size.X/2+size.X, rMin.Y-size.Y/2+size.Y)
 	default: // TopLeft
 		rMin := image.Point{min.X + c.Anchor.X, min.Y + c.Anchor.Y}
 		r = image.Rect(rMin.X, rMin.Y, rMin.X+size.X, rMin.Y+size.Y)
@@ -168,16 +168,15 @@ func (c Config) computedCropArea(bounds image.Rectangle, size image.Point) (r im
 }
 
 func (c *Config) centeredMin(bounds image.Rectangle) (rMin image.Point) {
-	min := bounds.Min
 	if c.Anchor.X == 0 && c.Anchor.Y == 0 {
 		rMin = image.Point{
-			X: min.X + bounds.Dx()/2,
-			Y: min.Y + bounds.Dy()/2,
+			X: bounds.Dx() / 2,
+			Y: bounds.Dy() / 2,
 		}
 	} else {
 		rMin = image.Point{
-			X: min.X + c.Anchor.X,
-			Y: min.Y + c.Anchor.Y,
+			X: c.Anchor.X,
+			Y: c.Anchor.Y,
 		}
 	}
 	return

@@ -84,6 +84,31 @@ func TestCrop_Centered_Ratio_WithoutAnchorPosition(t *testing.T) {
 	}
 }
 
+func TestCrop_OddCenteredSource(t *testing.T) {
+	img := image.NewRGBA(image.Rect(0, 0, 10, 5))
+	point := image.Point{X: 4, Y: 2}
+	r, err := Crop(img, Config{
+		Width: 3, Height: 3,
+		Anchor: point,
+		Mode:   Centered,
+	})
+	if err != nil {
+		t.Fatal(err)
+	}
+	if r.Bounds().Dx() != 3 {
+		t.Error("Bad width should be 3 but is", r.Bounds().Dx())
+	}
+	if r.Bounds().Dy() != 3 {
+		t.Error("Bad width should be 3 but is", r.Bounds().Dy())
+	}
+	if r.Bounds().Min.X != 3 {
+		t.Error("Invalid Bounds Min X", r.Bounds().Min.X)
+	}
+	if r.Bounds().Min.Y != 1 {
+		t.Error("Invalid Bounds Min Y", r.Bounds().Min.Y)
+	}
+}
+
 func TestCutter_Crop_TooBigArea(t *testing.T) {
 	img := getImage()
 
@@ -251,6 +276,10 @@ func TestCropForceCopy(t *testing.T) {
 
 func getImage() image.Image {
 	return image.NewGray(image.Rect(0, 0, 1600, 1437))
+}
+
+func getOddImage() image.Image {
+	return image.NewGray(image.Rect(0, 0, 999, 999))
 }
 
 func getGopherImage() image.Image {
