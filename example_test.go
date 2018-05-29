@@ -56,7 +56,7 @@ func ExampleCropPng() {
 	if err != nil {
 		log.Fatal("Cannot crop image:", err)
 	}
-	// The image is smaller than the Crop call	
+	// The image is smaller than the Crop call
 	fmt.Println("cImg dimension:", cImg.Bounds())
 	// Output: cImg dimension: (10,10)-(312,288)
 }
