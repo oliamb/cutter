@@ -4,18 +4,19 @@ import (
 	"errors"
 	"flag"
 	"fmt"
-	"github.com/oliamb/cutter"
 	"image"
 	"image/jpeg"
 	"image/png"
 	"log"
 	"os"
 	"path/filepath"
+
+	"github.com/oliamb/cutter"
 )
 
 func main() {
 	s := len(os.Args)
-	if s < 4 {
+	if s < 3 {
 		usage()
 		return
 	}
