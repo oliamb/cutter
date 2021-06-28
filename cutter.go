@@ -124,6 +124,46 @@ func cropWithCopy(img image.Image, cr image.Rectangle) (image.Image, error) {
 	return result, nil
 }
 
+// Trim reduces the image by cropping off transparent area around an image.
+func TrimAlpha(img image.Image) (image.Image, error) {
+	bounds := img.Bounds()
+	minY := bounds.Min.Y
+	maxY := bounds.Max.Y
+	minX := bounds.Min.X
+	maxX := bounds.Max.X
+	for has_img := false; minY < maxY && !has_img; minY++ {
+		for i := minX; i < maxX; i++ {
+			_, _, _, A := img.At(i, minY).RGBA()
+			has_img = has_img || (A != 0)
+		}
+	}
+	for has_img := false; minY < maxY && !has_img; maxY-- {
+		for i := maxX - 1; i >= minX; i-- {
+			_, _, _, A := img.At(i, maxY).RGBA()
+			has_img = has_img || (A != 0)
+		}
+	}
+	for has_img := false; minX < maxX && !has_img; minX++ {
+		for i := minY; i < maxY; i++ {
+			_, _, _, A := img.At(minX, i).RGBA()
+			has_img = has_img || (A != 0)
+		}
+	}
+	for has_img := false; minX < maxX && !has_img; maxX-- {
+		for i := maxY - 1; i >= minY; i-- {
+			_, _, _, A := img.At(maxX, i).RGBA()
+			has_img = has_img || (A != 0)
+		}
+	}
+
+	return Crop(img, Config{
+		Width:  maxX - minX + 2,
+		Height: maxY - minY + 2,
+		Anchor: image.Point{minX - 1, minY - 1},
+		Mode:   TopLeft,
+	})
+}
+
 func (c Config) maxBounds(bounds image.Rectangle) (r image.Rectangle) {
 	if c.Mode == Centered {
 		anchor := c.centeredMin(bounds)
